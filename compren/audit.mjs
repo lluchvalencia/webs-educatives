@@ -1,6 +1,6 @@
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
-const code=readFileSync(new URL('./bank.js',import.meta.url),'utf8')+'\n'+readFileSync(new URL('./app.js',import.meta.url),'utf8').split('const defaultState=')[0]+'\n;({readings,qCounter})';
+const code=readFileSync(new URL('./bank.js',import.meta.url),'utf8')+'\n'+readFileSync(new URL('./supplement.js',import.meta.url),'utf8')+'\n'+readFileSync(new URL('./app.js',import.meta.url),'utf8').split('const defaultState=')[0]+'\n;({readings,qCounter})';
 const {readings,qCounter}=vm.runInNewContext(code);
 const questions=readings.flatMap(r=>r.questions);
 const lengths=readings.map(r=>({id:r.id,words:r.text.trim().split(/\s+/).length})).sort((a,b)=>a.words-b.words);
@@ -15,4 +15,4 @@ if(answerPositions.some(n=>n!==questions.length/4))errors.push('unbalanced answe
 if(Object.values(skillCounts).some(n=>n!==questions.length/4))errors.push('unbalanced cognitive skills');
 if(longest/questions.length>.35)errors.push('correct answer too often longest');
 console.log(JSON.stringify({readings:readings.length,questions:qCounter,wordRange:[lengths[0],lengths.at(-1)],medianWords:lengths[Math.floor(lengths.length/2)].words,answerPositions,correctLongest:longest,skills:skillCounts,errors},null,2));
-if(errors.length||readings.length<40||qCounter<320)process.exitCode=1;
+if(errors.length||readings.length<44||qCounter<352)process.exitCode=1;
